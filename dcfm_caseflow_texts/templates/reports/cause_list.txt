@@ -1,0 +1,25 @@
+# Original path: templates/reports/cause_list.html
+
+
+{% extends 'base.html' %}
+{% block content %}
+<h2>Daily Cause List</h2>
+<form method="get">
+  <label>Date: <input type="date" name="date" value="{{ date }}"></label>
+  <button type="submit">Load</button>
+</form>
+{% if data %}
+  {% for bench, items in data.items %}
+    <div class="card">
+      <h3>{{ bench }}</h3>
+      <ul>
+        {% for it in items %}
+        <li>{{ it.case }} — {{ it.type }}/{{ it.category }} — {{ it.date }} — Priority: {{ it.priority }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% empty %}
+  <p>No listed cases.</p>
+  {% endfor %}
+{% endif %}
+{% endblock %}

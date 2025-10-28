@@ -1,0 +1,28 @@
+# Original path: templates/cases/detail.html
+
+
+{% extends 'base.html' %}
+{% block content %}
+<h2>Case {{ case.number }}</h2>
+<p><b>Type:</b> {{ case.case_type }} | <b>Category:</b> {{ case.category }} | <b>State:</b> {{ case.state }}</p>
+<p><b>Priority:</b> {{ case.priority_score }} </p>
+<p><b>Next Hearing:</b> {{ case.next_hearing_date|default:"-" }} {% if case.bench_assigned %}(Bench: {{ case.bench_assigned.name }}){% endif %}</p>
+<div class="row">
+  <form action="{% url 'compute_priority' case.id %}" method="post">{% csrf_token %}
+    <button type="submit">Compute Priority</button>
+  </form>
+  <form action="{% url 'auto_schedule' case.id %}" method="post" style="margin-left:1rem">{% csrf_token %}
+    <button type="submit">Auto-Schedule</button>
+  </form>
+</div>
+<h3>Parties</h3>
+<ul>
+  {% for p in case.parties.all %}
+    <li>{{ p.role }}: {{ p.name }} ({{ p.advocate|default:"-" }})</li>
+  {% empty %}<li>No parties added.</li>{% endfor %}
+</ul>
+{% if explain %}
+<h3>Priority Explain</h3>
+<pre>{{ explain|safe }}</pre>
+{% endif %}
+{% endblock %}

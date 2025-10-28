@@ -1,0 +1,4 @@
+# Original path: requirements.txt
+
+Django>=5.0,<6
+django-filter>=24.2

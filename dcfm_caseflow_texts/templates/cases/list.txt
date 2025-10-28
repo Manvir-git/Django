@@ -1,0 +1,22 @@
+# Original path: templates/cases/list.html
+
+
+{% extends 'base.html' %}
+{% block content %}
+<h2>Cases</h2>
+<table>
+  <tr><th>Number</th><th>Type</th><th>Category</th><th>Priority</th><th>State</th><th>Next Hearing</th></tr>
+  {% for c in cases %}
+  <tr>
+    <td><a href="/cases/{{ c.id }}/">{{ c.number }}</a></td>
+    <td>{{ c.case_type }}</td>
+    <td>{{ c.category }}</td>
+    <td>{{ c.priority_score }}</td>
+    <td>{{ c.state }}</td>
+    <td>{{ c.next_hearing_date|default:"-" }}</td>
+  </tr>
+  {% empty %}
+  <tr><td colspan="6">No cases yet.</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

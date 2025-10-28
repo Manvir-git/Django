@@ -1,0 +1,39 @@
+# Original path: scheduling/management/commands/seed_caseflow.py
+
+
+from django.core.management.base import BaseCommand
+from django.utils import timezone
+from datetime import timedelta, time
+from scheduling.models import Judge, Bench, ScheduleSlot, TimeStandard
+
+class Command(BaseCommand):
+    help = 'Seed judges, benches, hourly slots (10 days), and time standards'
+
+    def handle(self, *args, **kwargs):
+        j1,_ = Judge.objects.get_or_create(name='Justice A', defaults={'specializations':['CIVIL','WRIT']})
+        j2,_ = Judge.objects.get_or_create(name='Justice B', defaults={'specializations':['CRIMINAL']})
+        j3,_ = Judge.objects.get_or_create(name='Justice C', defaults={'specializations':['TAX','CIVIL']})
+
+        b1,_ = Bench.objects.get_or_create(name='Bench-1', defaults={'capacity_per_day':30,'specialization_tags':['CIVIL','WRIT']})
+        b2,_ = Bench.objects.get_or_create(name='Bench-2', defaults={'capacity_per_day':25,'specialization_tags':['CRIMINAL']})
+        b3,_ = Bench.objects.get_or_create(name='Bench-3', defaults={'capacity_per_day':20,'specialization_tags':['TAX','CIVIL']})
+        b1.judges.set([j1]); b2.judges.set([j2]); b3.judges.set([j3])
+
+        ts_data = [
+            ('CIVIL','SUMMARY',15,180),('CIVIL','REGULAR',30,365),('CIVIL','COMPLEX',45,540),
+            ('CRIMINAL','SUMMARY',7,120),('CRIMINAL','REGULAR',15,240),('CRIMINAL','COMPLEX',30,420),
+            ('WRIT','REGULAR',15,240),('TAX','REGULAR',30,360)
+        ]
+        for ct,cat,first,disp in ts_data:
+            TimeStandard.objects.get_or_create(case_type=ct, category=cat, defaults={'first_listing_days':first,'disposal_days':disp})
+
+        start = timezone.now().date()
+        for bench in [b1,b2,b3]:
+            for d in range(0,10):
+                day = start + timedelta(days=d)
+                for h in range(10,16):  # 10:00 to 16:00 hourly
+                    ScheduleSlot.objects.get_or_create(
+                        bench=bench, date=day, start_time=time(hour=h), end_time=time(hour=h+1),
+                        defaults={'capacity_units':1}
+                    )
+        self.stdout.write(self.style.SUCCESS('Seed complete.'))

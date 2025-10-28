@@ -1,0 +1,20 @@
+# Original path: templates/home.html
+
+
+{% extends 'base.html' %}
+{% block content %}
+<section class="grid">
+  <div class="card">
+    <h2>Quick Actions</h2>
+    <ul>
+      <li><a href="/cases/new/">Create Case</a></li>
+      <li><a href="/cases/">View All Cases</a></li>
+      <li><a href="/reports/cause-list">Daily Cause List</a></li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>About</h2>
+    <p>DCFM: categorize, prioritize, and schedule cases to benches with time standards.</p>
+  </div>
+</section>
+{% endblock %}
