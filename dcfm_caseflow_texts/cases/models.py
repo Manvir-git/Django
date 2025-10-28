@@ -4,6 +4,7 @@
 from django.db import models
 from django.utils import timezone
 
+
 class Case(models.Model):
     CASE_TYPES = [('CIVIL','Civil'),('CRIMINAL','Criminal'),('WRIT','Writ'),('TAX','Tax'),('OTHER','Other')]
     CATEGORY = [('SUMMARY','Summary'),('REGULAR','Regular'),('COMPLEX','Complex')]
@@ -27,7 +28,13 @@ class Case(models.Model):
     admitted_date = models.DateField(null=True, blank=True)
     next_hearing_date = models.DateField(null=True, blank=True)
 
-    bench_assigned = models.ForeignKey('scheduling.Bench', null=True, blank=True, on_delete=models.SET_NULL, related_name='cases')
+    bench_assigned = models.ForeignKey(
+        'scheduling.Bench',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='cases',
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -35,7 +42,9 @@ class Case(models.Model):
     class Meta:
         ordering = ['-priority_score','filing_date']
 
-    def __str__(self): return self.number
+    def __str__(self):
+        return self.number
+
 
 class Party(models.Model):
     ROLES = [('PETITIONER','Petitioner'),('RESPONDENT','Respondent'),('INTERVENOR','Intervenor')]
@@ -44,4 +53,5 @@ class Party(models.Model):
     role = models.CharField(max_length=16, choices=ROLES)
     advocate = models.CharField(max_length=128, blank=True)
 
-    def __str__(self): return f"{self.role}: {self.name}"
+    def __str__(self):
+        return f"{self.role}: {self.name}"
